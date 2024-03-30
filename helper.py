@@ -53,3 +53,20 @@ def compare(aftr_data, bfr_data):
             pos_column.append("")
     aftr_data['Change'] = pos_column
     return aftr_data
+
+def data_description(data:pd.DataFrame):
+    n_positive = len(data[data['Status'] == 'Positive'])
+    n_negative = len(data[data['Status'] == 'Negative'])
+    n_others = len(data.query('Status!="Positive" & Status!="Negative"'))
+    return f"In the Top :blue[{len(data)}] of the search engine result page at the given date, there are :red[{n_negative}] unfavorable links and :green[{n_positive}] positive. Remaining are :orange[{n_others}] neutral links"
+
+def generate_pie(bfr_data):
+    fig = px.pie(
+                bfr_data, names="Status", color="Status",
+                color_discrete_map={
+                    'Positive':Color.green,
+                    'Negative':Color.red,
+                    'Other':Color.grey,
+                    'other':Color.grey,
+                })
+    return fig

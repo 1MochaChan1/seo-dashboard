@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from helper import Color, make_table, compare, colorize
+from helper import *
 
 
 data_sentiment_ranked = pd.read_csv("sentiment_ranked.csv", index_col=False)
@@ -31,23 +31,6 @@ with plotly:
         st.dataframe(data_ranked_profiles, hide_index=True)
 
 
-def data_description(data:pd.DataFrame):
-    n_positive = len(data[data['Status'] == 'Positive'])
-    n_negative = len(data[data['Status'] == 'Negative'])
-    n_others = len(data.query('Status!="Positive" & Status!="Negative"'))
-    return f"In the Top :blue[{len(data)}] of the search engine result page at the given date, there are :red[{n_negative}] unfavorable links and :green[{n_positive}] positive. Remaining are :orange[{n_others}] neutral links"
-
-def generate_pie(bfr_data):
-    fig = px.pie(
-                bfr_data, names="Status", color="Status",
-                color_discrete_map={
-                    'Positive':Color.green,
-                    'Negative':Color.red,
-                    'Other':Color.grey,
-                    'other':Color.grey,
-                })
-    return fig
-
 with rank_compare:
     valid_dates = []
     bfr_date = None
@@ -65,7 +48,6 @@ with rank_compare:
             st.caption(data_description(bfr_data))
             fig = generate_pie(bfr_data)
             st.plotly_chart(fig,use_container_width=True)
-            
             st.dataframe(bfr_data.style.apply(colorize, df=bfr_data), use_container_width=True, hide_index=True)
             
             
@@ -82,6 +64,5 @@ with rank_compare:
                 st.write("After")
                 st.caption(data_description(aftr_data))
                 fig = generate_pie(aftr_data)
-
                 st.plotly_chart(fig,use_container_width=True)
                 st.dataframe(aftr_data.style.apply(colorize, df=aftr_data), column_order=("Position", "Link","Change"), use_container_width=True, hide_index=True)
