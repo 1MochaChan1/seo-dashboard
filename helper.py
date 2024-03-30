@@ -30,23 +30,26 @@ def colorize(_:pd.Series, df:pd.DataFrame):
     return colors
 
 
-def compare(a_data, b_data):
-    compare_map = {}
-    for _, rows in b_data.iterrows():
+def compare(aftr_data, bfr_data):
+    compare_map = {} # link -> pos
+    for _, rows in bfr_data.iterrows():
         compare_map[rows['Link']] = rows['Position']
 
     pos_column = []
-    for _, rows in a_data.iterrows():
+    for _, rows in aftr_data.iterrows():
         curr_link = rows['Link']
         if(curr_link in compare_map.keys()):
             curr_pos = rows['Position']
-            if(curr_pos < compare_map[curr_link]):
-                pos_column.append("🔼")
-            elif (curr_pos > compare_map[curr_link]):
-                pos_column.append("🔽")
+            bfr_pos = compare_map[curr_link]
+            if(curr_pos < bfr_pos):
+                jump = (bfr_pos - curr_pos)
+                pos_column.append(f"🔼 +{jump}")
+            elif (curr_pos > bfr_pos):
+                jump = (curr_pos - bfr_pos)
+                pos_column.append(f"🔽 -{jump}")
             else:
                 pos_column.append("")
         else:
             pos_column.append("")
-    a_data['Change'] = pos_column
-    return a_data
+    aftr_data['Change'] = pos_column
+    return aftr_data
